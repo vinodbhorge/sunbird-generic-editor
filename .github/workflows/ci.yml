@@ -2,21 +2,24 @@ name: CI
 
 on:
   push:
-    branches: 
-      - "**" 
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      version_number: ${{ github.ref_name }}
+      build_number: ${{ github.run_number }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js 18
+      - name: Set up Node.js 10
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 10
 
       - name: Cache node modules
         uses: actions/cache@v3
@@ -31,12 +34,12 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             pr_number=${{ github.event.pull_request.number }}
-            prdata=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/vinodbbhorge/sunbird-generic-editor/pulls/$pr_number)
-            target_branch=release-5.2.1
+            prdata=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/vinodbbhorge/sunbird-generic-editor/pulls/$pr_number)
+            target_branch=$(echo "${prdata}" | jq -r '.base.ref')
             git clone https://github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
           else
             target_branch=${{ github.ref_name }}
-            git clone https://github.com/vindobbhorge/sunbird-content-plugins.git plugins -b $target_branch
+            git clone https://github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
           fi
 
       - name: Install global npm packages
@@ -74,14 +77,17 @@ jobs:
           name: coverage
           path: /tmp/coverage
 
-      - name: Set up Node.js 18 (for Sonar)
+      - name: Set up Node.js 14 (for Sonar)
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 14
+
+      - name: Install SonarQube Scanner
+        run: npm install -g sonarqube-scanner
 
       - name: SonarQube Scan
         env:
-          SONAR_TOKEN: 7ec1d9989cabf10dd039da8cdd0f27a049cc04ce
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Set this in your repo secrets
         run: |
           sonar-scanner \
             -Dsonar.projectKey=vinodbhorge_sunbird-generic-editor \
@@ -90,4 +96,4 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.cobertura.reportPath=./coverage/PhantomJS*/cobertura-coverage.xml \
             -Dsonar.language=js \
-            -Dsonar.login=$SONAR_TOKEN 
+            -Dsonar.login=$SONAR_TOKEN
