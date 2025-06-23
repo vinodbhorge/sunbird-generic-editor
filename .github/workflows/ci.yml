@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: 
+      - "**" 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package.json') }}
+
+      - name: Clone plugins
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            pr_number=${{ github.event.pull_request.number }}
+            prdata=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/Sunbird-Knowlg/sunbird-generic-editor/pulls/$pr_number)
+            target_branch=$(echo "${prdata}" | jq -r '.base.ref')
+            git clone https://github.com/Sunbird-Knowlg/sunbird-content-plugins.git plugins -b $target_branch
+          else
+            target_branch=${{ github.ref_name }}
+            git clone https://github.com/Sunbird-Knowlg/sunbird-content-plugins.git plugins -b $target_branch
+          fi
+
+      - name: Install global npm packages
+        run: sudo npm install -g bower@1.8.0 grunt-cli@1.2.0 gulp@3.9.1
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Bower cache clean
+        run: cd app && bower cache clean --allow-root
+
+      - name: Bower install
+        run: cd app && bower install --force --allow-root
+
+      - name: Gulp packageCorePlugins
+        run: gulp packageCorePlugins
+
+      - name: Plugin build
+        run: npm run plugin-build
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
+
+      - name: Copy coverage
+        run: |
+          mkdir -p /tmp/coverage
+          cp ./coverage/lcov/PhantomJS*/lcov.info /tmp/coverage || true
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: /tmp/coverage
+
+      - name: Set up Node.js 18 (for Sonar)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: 7ec1d9989cabf10dd039da8cdd0f27a049cc04ce
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=vinodbhorge_sunbird-generic-editor \
+            -Dsonar.organization=vinodbhorge \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.cobertura.reportPath=./coverage/PhantomJS*/cobertura-coverage.xml \
+            -Dsonar.language=js \
+            -Dsonar.login=$SONAR_TOKEN 
