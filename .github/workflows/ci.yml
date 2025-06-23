@@ -35,10 +35,10 @@ jobs:
             pr_number=${{ github.event.pull_request.number }}
             prdata=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/vinodbbhorge/sunbird-generic-editor/pulls/$pr_number)
             target_branch=$(echo "${prdata}" | jq -r '.base.ref')
-            git clone https://github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
+            git clone git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
           else
             target_branch=${{ github.ref_name }}
-            git clone https://github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
+            git clone git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
           fi
 
       - name: Install global npm packages
