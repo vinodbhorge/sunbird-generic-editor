@@ -28,13 +28,12 @@ jobs:
             node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('package.json') }}
 
-      - name: Clone plugins
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clone plugins (from fork)
+        # Uses vinodbhorge fork for both PR and branch builds
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             pr_number=${{ github.event.pull_request.number }}
-            prdata=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/vinodbbhorge/sunbird-generic-editor/pulls/$pr_number)
+            prdata=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/vinodbbhorge/sunbird-generic-editor/pulls/$pr_number)
             target_branch=$(echo "${prdata}" | jq -r '.base.ref')
             git clone https://github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
           else
@@ -85,7 +84,7 @@ jobs:
       - name: Install SonarQube Scanner
         run: npm install -g sonarqube-scanner
 
-      - name: SonarQube Scan
+      - name: SonarQube Scan (fork config)
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Set this in your repo secrets
         run: |
