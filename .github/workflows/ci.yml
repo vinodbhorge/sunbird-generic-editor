@@ -48,6 +48,9 @@ jobs:
       - name: Install global npm packages
         run: npm install --legacy-peer-deps
 
+      - name: Lint
+        run: npm run lint
+
       - name: Gulp packageCorePlugins
         run: gulp packageCorePlugins
 
