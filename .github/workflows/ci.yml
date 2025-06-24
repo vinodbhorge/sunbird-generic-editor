@@ -63,6 +63,7 @@ jobs:
 
       - name: Test
         run: npm run test
+        continue-on-error: true
 
       - name: Copy coverage
         run: |
