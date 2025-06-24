@@ -3,7 +3,9 @@ name: CI
 on:
   push:
     branches:
-      - '*'
+      - '**'
+env:
+  CONTENT_PLUGIN_RELEASE-TAG: 'release-8.0.0' # Set this to the desired release tag of the content plugin
 
 jobs:
   build:
@@ -28,17 +30,8 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('package.json') }}
 
       - name: Clone plugins (from fork)
-        # Uses vinodbhorge fork for both PR and branch builds
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            pr_number=${{ github.event.pull_request.number }}
-            prdata=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/vinodbbhorge/sunbird-generic-editor/pulls/$pr_number)
-            target_branch=$(echo "${prdata}" | jq -r '.base.ref')
-            git clone git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
-          else
-            target_branch=${{ github.ref_name }}
-            git clone git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/vinodbbhorge/sunbird-content-plugins.git plugins -b $target_branch
-          fi
+          git clone --branch ${{ env.KNOWLG_CORE_RELEASE_TAG }} https://github.com/vinodbbhorge/knowledge-platform.git
 
       - name: Install global npm packages
         run: sudo npm install -g bower@1.8.0 grunt-cli@1.2.0 gulp@3.9.1
