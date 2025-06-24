@@ -49,11 +49,11 @@ jobs:
       - name: Bower install
         run: cd app && bower install --force --allow-root
 
-      - name: Gulp packageCorePlugins
-        run: gulp packageCorePlugins
-
       - name: Plugin build
         run: npm run plugin-build
+
+      - name: Gulp packageCorePlugins
+        run: gulp packageCorePlugins
 
       - name: Build
         run: npm run build
