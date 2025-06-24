@@ -33,9 +33,6 @@ jobs:
         run: |
           git clone --branch ${{ env.CONTENT_PLUGIN_RELEASE-TAG }} https://github.com/vinodbhorge/sunbird-content-plugins.git plugins
 
-      - name: List plugins directory
-        run: ls -l plugins
-
       - name: Install dependencies
         run: |
           which bower || sudo npm install -g bower@1.8.0
@@ -99,3 +96,25 @@ jobs:
             -Dsonar.cobertura.reportPath=./coverage/PhantomJS*/cobertura-coverage.xml \
             -Dsonar.language=js \
             -Dsonar.login=$SONAR_TOKEN
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 10.24.1  # Use whatever version your project needs
+
+      - name: Install ESLint dependencies
+        run: |
+          npm install --save-dev eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Run Lint
+        run: npm run lint
