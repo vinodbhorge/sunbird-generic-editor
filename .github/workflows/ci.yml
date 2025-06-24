@@ -31,7 +31,7 @@ jobs:
 
       - name: Clone plugins (from fork)
         run: |
-          git clone --branch ${{ env.CONTENT_PLUGIN_RELEASE-TAG }} https://github.com/vinodbhorge/sunbird-content-plugins.git
+          git clone --branch ${{ env.CONTENT_PLUGIN_RELEASE-TAG }} https://github.com/vinodbhorge/sunbird-content-plugins.git plugins
 
       - name: Install dependencies
         run: |
