@@ -81,7 +81,6 @@ jobs:
         run: npm install -g sonarqube-scanner
 
       - name: Run SonarQube scanner
-        working-directory: content-editor
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
