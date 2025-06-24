@@ -38,6 +38,7 @@ jobs:
           which bower || sudo npm install -g bower@1.8.0
           which grunt || sudo npm install -g grunt-cli@1.2.0
           which gulp || sudo npm install -g gulp@3.9.1
+          sudo apt-get install -y libpng-dev build-essential
 
       - name: Install dependencies
         run: npm install
