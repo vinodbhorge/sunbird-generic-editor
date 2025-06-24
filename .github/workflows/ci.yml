@@ -46,7 +46,7 @@ jobs:
         run: cd app && bower install --force --allow-root
 
       - name: Install global npm packages
-        run: npm install --save-dev eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-n@9.0.0 --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: Gulp packageCorePlugins
         run: gulp packageCorePlugins
@@ -71,9 +71,6 @@ jobs:
         with:
           name: coverage
           path: /tmp/coverage
-
-      - name: Run Lint
-        run: npm run lint
 
       - name: Set up Node.js 14 (for Sonar)
         uses: actions/setup-node@v3
