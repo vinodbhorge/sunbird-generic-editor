@@ -31,7 +31,7 @@ jobs:
 
       - name: Clone plugins (from fork)
         run: |
-          git clone --branch ${{ env.KNOWLG_CORE_RELEASE_TAG }} https://github.com/vinodbhorge/sunbird-content-plugins.git
+          git clone --branch ${{ env.CONTENT_PLUGIN_RELEASE-TAG }} https://github.com/vinodbhorge/sunbird-content-plugins.git
 
       - name: Install global npm packages
         run: sudo npm install -g bower@1.8.0 grunt-cli@1.2.0 gulp@3.9.1
