@@ -33,6 +33,9 @@ jobs:
         run: |
           git clone --branch ${{ env.CONTENT_PLUGIN_RELEASE-TAG }} https://github.com/vinodbhorge/sunbird-content-plugins.git plugins
 
+      - name: List plugins directory
+        run: ls -l plugins
+
       - name: Install dependencies
         run: |
           which bower || sudo npm install -g bower@1.8.0
