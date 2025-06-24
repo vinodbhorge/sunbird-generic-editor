@@ -105,7 +105,8 @@
     "plugin-build": "webpack --config webpack.plugin.config.js",
     "build-editor": "npm run test && npm run collection-plugins && npm run build",
     "test": "karma start karmaconf.js",
-    "build-npm-pkg": "gulp packageCorePlugins && npm run plugin-build && webpack --env.channel=NPM_PACKAGE && cd generic-editor && gulp copystyleImages && gulp clean && gulp injectrenamedfiles"
+    "build-npm-pkg": "gulp packageCorePlugins && npm run plugin-build && webpack --env.channel=NPM_PACKAGE && cd generic-editor && gulp copystyleImages && gulp clean && gulp injectrenamedfiles",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",

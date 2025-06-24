@@ -76,6 +76,9 @@ jobs:
           name: coverage
           path: /tmp/coverage
 
+      - name: Run Lint
+        run: npm run lint
+
       - name: Set up Node.js 14 (for Sonar)
         uses: actions/setup-node@v3
         with:
@@ -92,7 +95,7 @@ jobs:
             -Dsonar.projectKey=vinodbhorge_sunbird-generic-editor \
             -Dsonar.organization=vinodbhorge \
             -Dsonar.sources=. \
-            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.host.url=https://sonarcloud.io  \
             -Dsonar.cobertura.reportPath=./coverage/PhantomJS*/cobertura-coverage.xml \
             -Dsonar.language=js \
             -Dsonar.login=$SONAR_TOKEN
