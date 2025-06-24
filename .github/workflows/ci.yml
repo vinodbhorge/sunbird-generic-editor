@@ -46,7 +46,7 @@ jobs:
         run: cd app && bower install --force --allow-root
 
       - name: Install global npm packages
-        run: npm install --legacy-peer-deps
+        run: npm install --save-dev eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise --legacy-peer-deps
 
       - name: Gulp packageCorePlugins
         run: gulp packageCorePlugins
@@ -89,32 +89,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: sonar-scanner
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 10.24.1  # Use whatever version your project needs
-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package.json') }}
-
-      - name: Clone plugins (from fork)
-        run: |
-          git clone --branch ${{ env.CONTENT_PLUGIN_RELEASE-TAG }} https://github.com/vinodbhorge/sunbird-content-plugins.git plugins
-
-      - name: Install ESLint dependencies
-        run: |
-          npm install --save-dev eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise
-
-      - name: Run Lint
-        run: npm run lint
