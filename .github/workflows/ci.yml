@@ -38,16 +38,16 @@ jobs:
           which bower || sudo npm install -g bower@1.8.0
           which grunt || sudo npm install -g grunt-cli@1.2.0
           which gulp || sudo npm install -g gulp@3.9.1
-          sudo apt-get install -y libpng-dev 
+          sudo apt-get install build-essential libpng-dev
+
+      - name: Install global npm packages
+        run: npm install --legacy-peer-deps
 
       - name: Bower cache clean
         run: cd app && bower cache clean --allow-root
 
       - name: Bower install
         run: cd app && bower install --force --allow-root
-
-      - name: Install global npm packages
-        run: npm install --legacy-peer-deps
 
       - name: Gulp packageCorePlugins
         run: gulp packageCorePlugins
