@@ -151,6 +151,9 @@ module.exports = {
     'no-return-assign': 'warn',
     'no-mixed-operators': 'warn',
     'no-new-wrappers': 'warn',
-    'object-property-newline': 'warn'
+    'object-property-newline': 'warn',
+    'no-new-func': 'warn',
+    'wrap-iife': 'warn',
+    'no-useless-escape': 'warn',
   }
 }
