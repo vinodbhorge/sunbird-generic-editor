@@ -1,14 +1,14 @@
 name: CI
 
 on:
-  push:
+  pull_request:
     branches:
       - '**'
 env:
   CONTENT_PLUGIN_RELEASE-TAG: 'release-8.0.0' # Set this to the desired release tag of the content plugin
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
     env:
       version_number: ${{ github.ref_name }}
@@ -28,9 +28,16 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('package.json') }}
 
-      - name: Clone plugins (from fork)
+      - name: Clone plugins
         run: |
-          git clone --branch ${{ env.CONTENT_PLUGIN_RELEASE-TAG }} https://github.com/vinodbhorge/sunbird-content-plugins.git plugins
+          if [ -z "${{ github.event.number }}" ]; then
+            target_branch=${{ github.ref_name }}
+            git clone https://github.com/vinodbhorge/sunbird-content-plugins.git plugins -b $target_branch
+          else
+            prdata=$(curl -X GET -u ${{ secrets.GITHUB_TOKEN }}:x-oauth-basic https://api.github.com/repos/vinodbhorge/sunbird-content-editor/pulls/${{ github.event.number }})
+            target_branch=$(echo "${prdata}" | jq -r '.base.ref')
+            git clone https://github.com/vinodbhorge/sunbird-content-plugins.git plugins -b $target_branch
+          fi
 
       - name: Install dependencies
         run: |
@@ -40,10 +47,12 @@ jobs:
           sudo apt-get install build-essential libpng-dev
 
       - name: Bower cache clean
-        run: cd app && bower cache clean --allow-root
+        working-directory: app
+        run: bower cache clean --allow-root
 
       - name: Bower install
-        run: cd app && bower install --force --allow-root
+        working-directory: app
+        run: bower install --force --allow-root
 
       - name: Install global npm packages
         run: npm install --legacy-peer-deps
@@ -61,17 +70,6 @@ jobs:
         run: npm run test
         continue-on-error: true
 
-      - name: Copy coverage
-        run: |
-          mkdir -p /tmp/coverage
-          cp ./coverage/lcov/PhantomJS*/lcov.info /tmp/coverage || true
-
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: /tmp/coverage
-
       - name: Set up Node.js 14 (for Sonar)
         uses: actions/setup-node@v3
         with:
@@ -87,6 +85,7 @@ jobs:
         run: sonar-scanner
 
   lint:
+    needs: build-test
     runs-on: ubuntu-latest
 
     steps:
