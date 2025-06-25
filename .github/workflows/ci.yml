@@ -102,12 +102,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-package-${{ hashFiles('package.json') }}
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y libpng-dev build-essential
-          npm install --legacy-peer-deps
+          key: ${{ runner.os }}-node-${{ hashFiles('package.json') }}
 
       - name: Run Lint
         run: npm run lint
