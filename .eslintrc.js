@@ -139,5 +139,17 @@ module.exports = {
     'brace-style': 'warn',
     'no-unused-vars': 'warn',
     'yoda': 'warn',
+    'no-dupe-keys': 'warn',
+    'comma-dangle': 'warn',
+    'no-redeclare': 'warn',
+    'new-parens': 'warn',
+    'no-unused-expressions': 'warn',
+    'no-floating-decimal': 'warn',
+    'new-cap': 'warn',
+    'no-return-assign': 'warn',
+    'no-sequences': 'warn',
+    'no-return-assign': 'warn',
+    'no-mixed-operators': 'warn',
+    'no-new-wrappers': 'warn',
   }
 }
