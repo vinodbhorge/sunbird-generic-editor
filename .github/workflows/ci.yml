@@ -28,7 +28,7 @@ jobs:
 
       - name: Clone plugins
         run: |
-          if [ -z "${{ github.event.number }}" ]; then
+          if [ -z "empty" ]; then
             target_branch=${{ github.ref_name }}
             git clone https://github.com/vinodbhorge/sunbird-content-plugins.git plugins -b $target_branch
           else
