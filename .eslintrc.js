@@ -71,6 +71,7 @@ require('eslint-plugin-only-warn');
 module.exports = {
   extends: 'standard',
   plugins: ['only-warn'], // makes all rules default to warnings
+  ignorePatterns: ['gulpfile.js', 'webpack.config.js', 'app/bower_components/**'],
   globals: {
     org: true,
     CryptoJS: true,
