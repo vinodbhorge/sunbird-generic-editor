@@ -155,5 +155,8 @@ module.exports = {
     'no-new-func': 'warn',
     'wrap-iife': 'warn',
     'no-useless-escape': 'warn',
+    'standard/computed-property-even-spacing': 'warn',
+    'operator-linebreak': 'warn',
+    'no-labels': 'warn',
   }
 }
